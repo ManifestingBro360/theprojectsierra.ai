@@ -1,0 +1,42 @@
+<!--{"path":"/guides/merge-queue-vs-canopy/","title":"Merge queue or Canopy: which problem do you have?","description":"What a merge queue guarantees for AI coding agents, what it cannot see, how Canopy differs, and measured numbers for both, including where Canopy is slower."}-->
+<section class="page"><div class="wrap"><article class="prose">
+  <h1>Merge queue or Canopy: which problem do you have?</h1>
+  <p class="meta">Guide, 22 November 2026</p>
+  <p class="lead">A merge queue keeps <code>main</code> green by testing each change on top of the ones ahead of it. Canopy tells agents about each other while they work and decides who may land what. They solve different problems, and many teams will want both.</p>
+
+  <h2>What a merge queue guarantees</h2>
+  <p>Every commit on <code>main</code> passed the checks in the order it landed. That is a strong guarantee, and it is mature: GitHub, GitLab and several standalone tools provide it.</p>
+
+  <h2>What it cannot see</h2>
+  <ul>
+    <li><strong>Breaks no test covers.</strong> A queue runs your checks. If nothing exercises a stale call, it lands.</li>
+    <li><strong>Anything before merge.</strong> The agent that wrote the stale code has usually finished by the time the queue fails it.</li>
+    <li><strong>What the agent read.</strong> A queue has no record of whether an agent looked at the code its change affects.</li>
+    <li><strong>Where a change came from.</strong> It does not know that a session read a web page before editing your auth code.</li>
+  </ul>
+
+  <h2>What Canopy adds, and what it costs</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Serial merge queue</th><th>Canopy</th></tr></thead>
+    <tbody>
+      <tr><th>A changed signature and a new caller elsewhere</th><td>Caught at merge if a test covers it</td><td>Agent told while working; landing refused even with no test</td></tr>
+      <tr><th>Eight unrelated branches, 1 s check each</th><td>9.2 s</td><td>12.2 s by default; 5.9 s with <code>disjoint</code></td></tr>
+      <tr><th>Fixed cost per landing</th><td>The queue's own</td><td>About 0.6 s besides your checks</td></tr>
+      <tr><th>Works on GitHub.com as is</th><td>Yes</td><td>Partly: Canopy must be the only identity allowed to push main</td></tr>
+      <tr><th>Maturity</th><td>Years in production</td><td>First release; tested with scripted agents</td></tr>
+    </tbody>
+  </table></div>
+  <p>The numbers come from <a href="{{github}}/canopy/blob/main/test/baseline.test.mjs">one test file</a> on one laptop. Canopy's safe default re-runs checks whenever <code>main</code> moved, which makes it slower than a plain queue for unrelated branches. The <code>disjoint</code> setting skips the re-run when the code graph shows no interaction, and is faster.</p>
+
+  <h2>Which to choose</h2>
+  <ul>
+    <li><strong>Agents rarely touch related code, and your tests are thorough:</strong> a merge queue is enough.</li>
+    <li><strong>Agents often work in the same area, or you keep finding breaks after merge:</strong> add Canopy for the early warning.</li>
+    <li><strong>You need to know who and what wrote a change, or to keep some folders behind human approval:</strong> that is Canopy's gate, not a queue's job.</li>
+    <li><strong>You need something proven in production today:</strong> use the queue, and try Canopy on a side repository.</li>
+  </ul>
+  <p>Read <a href="/canopy/">how Canopy works</a> or the other <a href="/guides/">guides</a>.</p>
+</article></div></section>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"Merge queue or Canopy: which problem do you have?","description":"What a merge queue guarantees for AI coding agents, what it cannot see, how Canopy differs, with measured numbers.","url":"{{site}}/guides/merge-queue-vs-canopy/","datePublished":"2026-11-22","author":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"},"publisher":{"@type":"Organization","name":"{{org}}"}}
+</script>

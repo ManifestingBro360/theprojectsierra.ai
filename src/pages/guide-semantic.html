@@ -1,0 +1,42 @@
+<!--{"path":"/guides/semantic-merge-conflicts/","title":"Why a clean merge can still break main: semantic merge conflicts","description":"A semantic merge conflict is when two changes merge without a text conflict but the result is broken. What causes them, why AI coding agents produce more of them, and four ways to catch them."}-->
+<section class="page"><div class="wrap"><article class="prose">
+  <h1>Why a clean merge can still break main</h1>
+  <p class="meta">Guide, 22 November 2026</p>
+  <p class="lead">A semantic merge conflict is when two changes merge with no text conflict, each passed its own tests, and the combined result is broken. Git cannot see it, because Git compares lines, not meaning.</p>
+
+  <h2>The smallest example</h2>
+  <div class="term"><header><span>branch A changes a function</span></header><pre><span class="r">- export function toCents(amount) {</span>
+<span class="g">+ export function toCents(amount, mode) {</span></pre></div>
+  <div class="term"><header><span>branch B, in another file, adds a call</span></header><pre><span class="g">+ const fee = toCents(order.fee);</span></pre></div>
+  <p>The branches touch different files, so Git merges them cleanly. A updated every caller that existed when it ran its tests. B's call did not exist yet. B tested against the old <code>toCents</code>. After both land, B's call passes one argument to a function that needs two.</p>
+
+  <h2>Common shapes</h2>
+  <ul>
+    <li>A function's signature changes while a new caller is written elsewhere.</li>
+    <li>A function is removed or renamed while new code starts using it.</li>
+    <li>A value's meaning changes (cents to units, seconds to milliseconds) and a new reader assumes the old one.</li>
+    <li>A configuration key is renamed in one branch and read in another.</li>
+  </ul>
+
+  <h2>Why agents cause more of them</h2>
+  <p>People working in the same area usually mention it to each other. Agents in separate worktrees do not know the others exist. They also work fast and in parallel, so more changes overlap in time, and they read the code once at the start and trust what they read.</p>
+
+  <h2>Four ways to catch them</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Method</th><th>When it catches it</th><th>What it needs</th></tr></thead>
+    <tbody>
+      <tr><th>CI on main after merge</th><td>After main is already broken</td><td>A test that covers the new call</td></tr>
+      <tr><th>Merge queue</th><td>At merge, before main moves</td><td>A test that covers the new call</td></tr>
+      <tr><th>A typed language and a full build in the queue</th><td>At merge</td><td>The break to be a type error</td></tr>
+      <tr><th>Tracking who reads and calls what</th><td>While both are still working</td><td>A record of each agent's reads and writes</td></tr>
+    </tbody>
+  </table></div>
+  <p>The first three all act at merge time and depend on a test or a type check noticing. The last is what <a href="/canopy/">Canopy</a> does: when a signature changes in one worktree, every other worktree that read it, calls it, or is changing something that depends on it is told in its agent's next tool call. If the call is still stale at landing, the landing is refused whether or not a test covers it.</p>
+
+  <h2>What this approach misses</h2>
+  <p>Canopy's code graph is built by pattern matching on JavaScript, TypeScript, Python and Go. It does not follow dynamic dispatch, re-exports, or dependencies that are not code references, such as a changed database column. A merge queue with good tests remains worth having.</p>
+  <p>Next: <a href="/guides/merge-queue-vs-canopy/">merge queue or Canopy</a>, or <a href="/canopy/#start">try the demo</a>.</p>
+</article></div></section>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"Why a clean merge can still break main: semantic merge conflicts","description":"What semantic merge conflicts are, why AI coding agents produce more of them, and four ways to catch them.","url":"{{site}}/guides/semantic-merge-conflicts/","datePublished":"2026-11-22","author":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"},"publisher":{"@type":"Organization","name":"{{org}}"}}
+</script>

@@ -1,0 +1,57 @@
+<!--{"path":"/guides/multiple-claude-code-agents-one-repo/","title":"How to run several Claude Code agents on one repository","description":"Run multiple Claude Code agents in parallel on one Git repository using worktrees: the setup, what breaks in practice, and how to make agents aware of each other's changes before merge."}-->
+<section class="page"><div class="wrap"><article class="prose">
+  <h1>How to run several Claude Code agents on one repository</h1>
+  <p class="meta">Guide, 22 November 2026</p>
+  <p class="lead">Give each agent its own Git worktree and branch. That stops them overwriting each other's files. It does not stop them breaking each other's code, and this guide covers both halves.</p>
+
+  <h2>The setup that works</h2>
+  <p>A worktree is a second checkout of the same repository in another folder, on its own branch. Agents in separate worktrees cannot touch each other's working files.</p>
+  <div class="term"><header><span>one worktree per agent</span></header><pre>git worktree add ../wt-refunds -b feat/refunds
+git worktree add ../wt-cart    -b fix/cart-rounding
+
+<span class="c"># start one Claude Code session in each folder</span>
+cd ../wt-refunds && claude</pre></div>
+  <ul>
+    <li>One task, one branch, one worktree. Do not let two sessions share a worktree.</li>
+    <li>Keep tasks small enough to land the same day. Long-lived branches drift.</li>
+    <li>Install dependencies per worktree, or use a package manager with a shared store.</li>
+    <li>Remove the worktree when the branch lands: <code>git worktree remove ../wt-refunds</code>.</li>
+  </ul>
+
+  <h2>What still goes wrong</h2>
+  <h3>Two agents change the same function</h3>
+  <p>Git reports a text conflict at merge. The second agent has to redo work against code it has never seen. This is the visible failure, and the cheaper one.</p>
+  <h3>One agent changes a function, another calls it</h3>
+  <p>Agent A adds a required argument to <code>total()</code>. Agent B, in another file, writes a new call to the old <code>total()</code>. There is no text conflict. Both branches pass their own tests. After both merge, <code>main</code> is broken. See <a href="/guides/semantic-merge-conflicts/">why a clean merge can still break main</a>.</p>
+  <h3>Nobody knows what an agent looked at</h3>
+  <p>The pull request shows what changed. It does not show whether the agent read the callers of what it changed, or whether it followed instructions it found on a web page.</p>
+  <h3>Rules in a prompt file are requests</h3>
+  <p>A line in <code>CLAUDE.md</code> saying "run the payment tests" depends on the agent choosing to. It can also edit that file.</p>
+
+  <h2>Without extra tools</h2>
+  <ul>
+    <li>Split work by folder so agents rarely share code.</li>
+    <li>Use a merge queue so every branch is tested on top of the latest <code>main</code> before it lands.</li>
+    <li>Have each agent run <code>git merge main</code> and the full tests immediately before finishing.</li>
+    <li>Protect build, CI and test configuration with code owners.</li>
+  </ul>
+  <p>This catches most breakage at merge time, as long as a test covers the broken call. The agent that caused it has usually finished by then.</p>
+
+  <h2>With Canopy</h2>
+  <p><a href="/canopy/">Canopy</a> is an open-source layer above Git that connects to Claude Code through its hooks. It records what each agent reads and writes and tells an agent, inside its next tool call, when another agent changes something it relies on.</p>
+  <div class="term"><header><span>in your repository</span></header><pre>canopy init      <span class="c"># writes Claude Code hooks and a starter rules file</span>
+canopy serve     <span class="c"># the local server and live map</span>
+<span class="c"># agents work in worktrees as above, then:</span>
+canopy land      <span class="c"># checks, then one signed merge commit on main</span></pre></div>
+  <p>In the second failure above, Agent B is told about the changed signature while it is still working, 22 ms after the edit in our test, before either agent has committed. If B never fixes the call, the landing is refused even when no test covers it.</p>
+  <h3>What Canopy does not do yet</h3>
+  <ul>
+    <li>It has been tested with scripted agents, not at length with real ones.</li>
+    <li>It is proven on macOS only.</li>
+    <li>With its default setting, landing unrelated branches is slower than a plain merge queue.</li>
+  </ul>
+  <p><a href="/canopy/#start">Try the one-minute demo</a>, or read the other <a href="/guides/">guides</a>.</p>
+</article></div></section>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"How to run several Claude Code agents on one repository","description":"Run multiple Claude Code agents in parallel on one Git repository using worktrees: the setup, what breaks, and how to make agents aware of each other.","url":"{{site}}/guides/multiple-claude-code-agents-one-repo/","datePublished":"2026-11-22","author":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"},"publisher":{"@type":"Organization","name":"{{org}}"}}
+</script>

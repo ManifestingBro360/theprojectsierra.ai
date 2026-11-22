@@ -202,3 +202,18 @@ td .src { display: block; margin-top: 4px; }
   .project { padding: 22px; }
   .top nav a:not(.gh) { padding: 6px 7px; }
 }
+
+/* Guides */
+.prose { max-width: 720px; }
+.prose h1 { font-size: clamp(2rem, 4.2vw, 3rem); }
+.prose h2 { font-size: 1.5rem; margin: 2em 0 0.5em; }
+.prose h3 { margin-top: 1.6em; }
+.prose p, .prose li { color: color-mix(in srgb, var(--ink) 82%, var(--bg)); }
+.prose ul, .prose ol { padding-left: 1.2em; max-width: 64ch; } .prose li { margin-bottom: 0.45em; }
+.prose .term { margin: 18px 0 22px; }
+.prose .tablewrap { margin: 18px 0 22px; } .prose table { min-width: 560px; }
+.prose .meta { font: 500 0.8rem var(--mono); color: var(--faint); margin: 14px 0 28px; }
+.guides { list-style: none; padding: 0; margin: 32px 0 0; }
+.guides li { border-top: 1px solid var(--line); padding: 20px 0; } .guides li:last-child { border-bottom: 1px solid var(--line); }
+.guides a { font-weight: 600; font-size: 1.1rem; letter-spacing: -0.015em; text-decoration: none; } .guides a:hover { text-decoration: underline; }
+.guides p { color: var(--muted); margin: 4px 0 0; }

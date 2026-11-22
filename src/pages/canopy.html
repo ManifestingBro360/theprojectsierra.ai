@@ -10,6 +10,7 @@
     <a href="#numbers">Numbers</a>
     <a href="#start">Start</a>
     <a href="#contribute">Contribute</a>
+    <a href="/guides/">Guides</a>
   </div>
 </div>
 
@@ -18,7 +19,7 @@
     <div>
       <ul class="pills">
         <li><span class="pill"><i class="dot amber"></i>v0.1, early</span></li>
-        <li><a class="pill" href="{{github}}/canopy/actions"><i class="dot"></i>93 of 93 tests passing</a></li>
+        <li><a class="pill" href="{{github}}/canopy/actions"><i class="dot"></i>tests passing on main</a></li>
         <li><a class="pill" href="{{github}}/canopy/blob/main/LICENSE">Apache-2.0</a></li>
       </ul>
       <h1>Catch agent collisions while they work, not at merge.</h1>
@@ -213,7 +214,7 @@
           <tr><th scope="row">Context handed to an agent entering a folder</th><td class="num">83 to 339 characters<a class="src" href="{{github}}/canopy/blob/main/test/context.test.mjs">context.test.mjs</a></td><td>Rules, who else is there, why the last three landings happened</td></tr>
           <tr><th scope="row">Fixed cost of one landing</th><td class="num">about 0.6 s<a class="src" href="{{github}}/canopy/blob/main/test/perf-land.test.mjs">perf-land.test.mjs</a></td><td>On top of your checks. 1.8 s in a 10,000-file repository</td></tr>
           <tr><th scope="row">Eight unrelated branches landing at once, 1 s check each</th><td class="num">12.2 s default<br>5.9 s disjoint<a class="src" href="{{github}}/canopy/blob/main/test/baseline.test.mjs">baseline.test.mjs</a></td><td>A plain serial queue took 9.2 s. The safe default is slower than a queue. Only the <code>disjoint</code> setting is faster</td></tr>
-          <tr><th scope="row">Test suite</th><td class="num">93 of 93 pass<a class="src" href="{{github}}/canopy/actions">GitHub Actions</a></td><td>All agent behaviour in the tests is scripted</td></tr>
+          <tr><th scope="row">Test suite</th><td class="num">138 pass, 1 skipped<a class="src" href="{{github}}/canopy/actions">GitHub Actions</a></td><td>All agent behaviour in the tests is scripted</td></tr>
         </tbody>
       </table>
     </div>
@@ -275,12 +276,14 @@ canopy land</pre></div>
         </ul>
       </div>
     </div>
-    <h3 style="margin-top:48px">Being built now, not released</h3>
+    <h3 style="margin-top:48px">New on main, not yet in a release</h3>
+    <p class="small">All of it is off until you switch it on. Tested with scripted agents and stand-in commands only.</p>
     <ul class="list" style="margin-top:12px">
-      <li><strong>Owners and approvals<span class="tag">in progress</span></strong><span>Name who owns a folder. Their approval is needed to land there, and when a change elsewhere reaches code that depends on theirs.</span></li>
-      <li><strong>Who and which model<span class="tag">in progress</span></strong><span>Every landing names the person, the harness and the model. Folders can be limited to stronger models.</span></li>
-      <li><strong>A manager agent and vulnerability checks<span class="tag">in progress</span></strong><span>An independent second look by a model you choose, which can only raise the bar, and a check of new dependencies against OSV.dev.</span></li>
-      <li><strong>Environments<span class="tag">in progress</span></strong><span>Staging and production branches that only move forward, each with its own people and checks.</span></li>
+      <li><strong>People, owners and approvals<span class="tag">on main</span></strong><span>Name who owns a folder. A change lands there only when its owners approve the exact commit, and they are asked when a change elsewhere reaches code that depends on theirs.</span></li>
+      <li><strong>Who and which model<span class="tag">on main</span></strong><span>Each landing names the person, the harness and the model. Folders can be limited to models you list. Model names are reported by the harness, so this routes work to a person; it is not proof.</span></li>
+      <li><strong>A manager agent and vulnerability checks<span class="tag">on main</span></strong><span>A second opinion from a model you choose, which can only raise the bar, and a lookup of new dependencies in OSV.dev. Not yet run against live models.</span></li>
+      <li><strong>Environments and notifications<span class="tag">on main</span></strong><span>Staging and production branches that only move forward, each with its own people and checks. Approvals and alerts go to Slack, Discord or any webhook.</span></li>
+      <li><strong>Catch-up and other harnesses<span class="tag">on main</span></strong><span>A returning agent gets one line per function others changed, with the lines to re-read. Codex and hook-less harnesses can connect; the Codex adapter has not been run against Codex.</span></li>
     </ul>
     <div class="cta">
       <a class="btn solid" href="{{github}}/canopy/blob/main/CONTRIBUTING.md">Read the contributor guide</a>
@@ -296,9 +299,9 @@ canopy land</pre></div>
       <details><summary>Is Canopy a replacement for Git or GitHub?</summary><p>No. Git still stores the code and your forge still hosts it. Canopy is a layer above them: it records what agents do while they work and decides what may reach <code>main</code>.</p></details>
       <details><summary>How is this different from a merge queue?</summary><p>A merge queue tests changes one after another at merge time. Canopy tells agents about a conflict while they are still working, before either has committed, and it can block a landing whose new code calls a function that changed on <code>main</code> even when no test covers that call.</p></details>
       <details><summary>How is this different from file locking?</summary><p>Locks make agents wait whenever their files overlap and miss conflicts between different files. Canopy works at the level of functions and their callers. An agent is made to wait only when two want to rewrite the same function, and only once.</p></details>
-      <details><summary>Which coding agents does it work with?</summary><p>Claude Code today, through its HTTP hooks. Any harness that can post the same five hook events can be an adapter. Adapters for other tools are open issues.</p></details>
+      <details><summary>Which coding agents does it work with?</summary><p>Claude Code is the tested path, through its HTTP hooks. On main there is also a Codex adapter, written from Codex’s documentation and not yet run against Codex, and a check-in command for any harness with no hooks. The landing gate applies the same way to all of them.</p></details>
       <details><summary>Does it work with GitHub.com or GitLab.com?</summary><p>Partly. Hosted forges do not run custom <code>pre-receive</code> hooks, so there you make the Canopy host the only identity allowed to push to <code>main</code> using branch protection. On a self-hosted Git server the hook enforces it directly.</p></details>
-      <details><summary>What does it send off my machine?</summary><p>Nothing. Canopy listens on the loopback address only. It stores file paths, symbol names, hashes and signatures in one SQLite file inside your repository’s <code>.git</code> folder. Tool output is discarded on arrival.</p></details>
+      <details><summary>What does it send off my machine?</summary><p>Nothing by default. Three optional features reach out when you switch them on: vulnerability lookups send package names and versions to OSV.dev, notifications post to the webhook you give, and a manager agent calls the model you choose. Canopy listens on the loopback address only. It stores file paths, symbol names, hashes and signatures in one SQLite file inside your repository’s <code>.git</code> folder. Tool output is discarded on arrival.</p></details>
       <details><summary>Was Canopy written by AI agents?</summary><p>Yes, directed by a person. The first version was designed, attacked on paper, built, reviewed and tested by separate Claude agents in defined roles. The review log and the test report are in the repository, including the defects that were found and the security test that did not run.</p></details>
       <details><summary>What licence is it under?</summary><p>Apache-2.0. Free to use, change and ship, including commercially.</p></details>
     </div>
@@ -313,8 +316,8 @@ canopy land</pre></div>
 {"@type":"Question","name":"Is Canopy a replacement for Git or GitHub?","acceptedAnswer":{"@type":"Answer","text":"No. Git still stores the code and your forge still hosts it. Canopy is a layer above them: it records what agents do while they work and decides what may reach main."}},
 {"@type":"Question","name":"How is Canopy different from a merge queue?","acceptedAnswer":{"@type":"Answer","text":"A merge queue tests changes one after another at merge time. Canopy tells agents about a conflict while they are still working, before either has committed, and it can block a landing whose new code calls a function that changed on main even when no test covers that call."}},
 {"@type":"Question","name":"How is Canopy different from file locking?","acceptedAnswer":{"@type":"Answer","text":"Locks make agents wait whenever their files overlap and miss conflicts between different files. Canopy works at the level of functions and their callers. An agent is made to wait only when two want to rewrite the same function, and only once."}},
-{"@type":"Question","name":"Which coding agents does Canopy work with?","acceptedAnswer":{"@type":"Answer","text":"Claude Code today, through its HTTP hooks. Any harness that can post the same five hook events can be an adapter."}},
+{"@type":"Question","name":"Which coding agents does Canopy work with?","acceptedAnswer":{"@type":"Answer","text":"Claude Code is the tested path, through its HTTP hooks. A Codex adapter and a check-in command for harnesses without hooks are on the main branch; the Codex adapter has not been run against Codex. The landing gate applies the same way to all of them."}},
 {"@type":"Question","name":"Does Canopy work with GitHub.com or GitLab.com?","acceptedAnswer":{"@type":"Answer","text":"Partly. Hosted forges do not run custom pre-receive hooks, so there the Canopy host must be the only identity allowed to push to main. On a self-hosted Git server the hook enforces it directly."}},
-{"@type":"Question","name":"What does Canopy send off my machine?","acceptedAnswer":{"@type":"Answer","text":"Nothing. It listens on the loopback address only and stores file paths, symbol names, hashes and signatures in one SQLite file inside the repository's .git folder."}}
+{"@type":"Question","name":"What does Canopy send off my machine?","acceptedAnswer":{"@type":"Answer","text":"Nothing by default. Optional vulnerability lookups (OSV.dev), webhook notifications and a manager agent reach out only when switched on. It listens on the loopback address only and stores file paths, symbol names, hashes and signatures in one SQLite file inside the repository's .git folder."}}
 ]}]}
 </script>

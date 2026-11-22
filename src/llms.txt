@@ -10,8 +10,8 @@
 
 - What it is: a layer above Git (not a Git replacement) for repositories where many AI coding agents work in parallel, each in its own worktree.
 - What it does: records what each agent reads and writes via harness hooks; notifies an agent in its next tool call when another agent changes a function it read or calls; lets `main` move only through `canopy land`, which runs sandboxed checks on the exact merge commit and attaches an Ed25519-signed record as a Git note; a `pre-receive` hook refuses any other route into `main`.
-- Works with: Claude Code today (HTTP hooks). Node 22.13+, Git 2.38+, no npm dependencies. macOS tested; Linux sandbox untested.
-- Status: v0.1. 93 of 93 tests pass with scripted agents. Not yet security-tested by a third party and not yet run at length with real agents.
+- Works with: Claude Code (HTTP hooks, the tested path); a Codex adapter and a hook-less `canopy checkin` are on the main branch (Codex adapter not yet run against Codex). Node 22.13+, Git 2.38+, no npm dependencies. macOS tested; Linux sandbox untested.
+- Status: release v0.1.0; main branch adds users and tokens, owners and approvals, per-folder model rules, a tighten-only manager agent, OSV.dev dependency checks, environments (staging, production), Slack/Discord/webhook notifications and a catch-up digest. 138 tests pass, 1 skipped, all with scripted agents. Not yet security-tested by a third party and not yet run at length with real agents.
 - Measured: hook round trip p50 0.46 ms; semantic conflict reported 22 ms after the edit; about 0.6 s fixed cost per landing; default setting is slower than a plain serial merge queue for unrelated branches (12.2 s vs 9.2 s for eight), `disjoint` setting is faster (5.9 s).
 - Try it: `git clone {{github}}/canopy && cd canopy && node bin/canopy.mjs demo`
 
@@ -19,6 +19,7 @@
 
 - [Home]({{site}}/): what the organisation is and its projects
 - [Canopy]({{site}}/canopy/): problem, how it works, comparison, numbers, quick start, open problems, FAQ
+- [Guides]({{site}}/guides/): running several coding agents on one repository, semantic merge conflicts, Canopy compared with a merge queue
 - [Adopters]({{site}}/adopters/): who uses the projects and how to request a logo
 - [Canopy design]({{github}}/canopy/blob/main/docs/DESIGN.md): architecture as built
 - [Canopy test report]({{github}}/canopy/blob/main/docs/TEST-REPORT.md)
