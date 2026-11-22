@@ -16,14 +16,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F2F5EE" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111E24" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0B" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="alternate" type="text/plain" href="/llms.txt" title="Summary for language models">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="{{bodyClass}}">
@@ -48,13 +48,10 @@
 <footer class="foot">
   <div class="wrap">
     <p><strong>{{org}}</strong><br>{{tagline}}.</p>
-    <ul>
-      <li><a href="/canopy/">Canopy</a></li>
-      <li><a href="/adopters/">Adopters</a></li>
-      <li><a href="{{github}}">GitHub</a></li>
-      <li><a href="/llms.txt">llms.txt</a></li>
-    </ul>
-    <p class="fine">Free and open source. No tracking on this site. {{year}}</p>
+    <div><h4>Projects</h4><ul><li><a href="/canopy/">Canopy</a></li><li><a href="/#projects">All projects</a></li></ul></div>
+    <div><h4>Take part</h4><ul><li><a href="{{github}}/canopy/blob/main/CONTRIBUTING.md">Contribute</a></li><li><a href="/adopters/">Adopters</a></li><li><a href="{{github}}/canopy/discussions">Discussions</a></li></ul></div>
+    <div><h4>Read</h4><ul><li><a href="{{github}}">GitHub</a></li><li><a href="{{github}}/canopy/blob/main/SECURITY.md">Security</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+    <p class="fine">Free and open source under Apache-2.0. This site sets no cookies and runs no analytics; its fonts load from Google Fonts. {{year}}</p>
   </div>
 </footer>
 <script src="/site.js" defer></script>

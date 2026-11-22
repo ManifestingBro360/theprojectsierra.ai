@@ -1,9 +1,10 @@
-<!--{"path":"/","title":"{{org}}: open-source tools for teams where agents and humans build together","description":"{{org}} is a home for open-source projects that make agent-written software visible, secure, fast and well made. First project: Canopy, a coordination and landing layer above Git for AI coding agents."}-->
-<section class="hero">
-  <div class="wrap" style="grid-template-columns:1fr">
+<!--{"path":"/","title":"{{org}}: open-source tools for people and AI agents who build software together","description":"{{org}} is a home for open-source projects that make agent-written software visible, secure, fast and well made. First project: Canopy, a coordination and landing layer above Git for AI coding agents."}-->
+<section class="hero solo">
+  <div class="wrap">
     <div>
-      <h1 style="max-width:17ch">Open-source tools for teams where agents and humans build together.</h1>
-      <p class="lead" style="margin-top:24px"><strong>{{org}} is a home for projects that make agent-written software something a team can see, trust and ship.</strong> Everything here is free to use, measured in public, and open to contributors.</p>
+      <ul class="pills"><li><a class="pill" href="#projects"><i class="dot"></i>First project out: Canopy 0.1</a></li></ul>
+      <h1 style="max-width:16ch">Tools for people and AI agents who build software together.</h1>
+      <p class="lead" style="margin-top:24px">More and more code is written by agents working beside people. <strong>{{org}} is a small, open home for the tools that make that work visible, safe and worth shipping.</strong> Everything here is free, measured in public, and written to be read.</p>
       <div class="cta">
         <a class="btn solid" href="#projects">See the projects</a>
         <a class="btn" href="{{github}}">Contribute on GitHub</a>
@@ -15,7 +16,8 @@
 <section id="stands-for">
   <div class="wrap">
     <h2>What every project here is held to</h2>
-    <dl class="pillars">
+    <p class="lead">Five things we check a project against before it carries this name.</p>
+    <dl class="cells c5 bleed end">
       <div><dt>Visibility</dt><dd>You can see what each agent read, changed and relied on.</dd></div>
       <div><dt>Security</dt><dd>Controls are enforced by the system, not requested in a prompt.</dd></div>
       <div><dt>Performance</dt><dd>Numbers are measured and published, including the ones we lose on.</dd></div>
@@ -29,7 +31,20 @@
   <div class="wrap">
     <h2>Projects</h2>
     {{projectCards}}
-    <div class="slot"><p><strong style="color:var(--ink)">More are on the way.</strong> Have a tool that helps agents and people work on the same code? <a href="{{github}}/canopy/discussions">Propose it as a project</a>.</p></div>
+    <div class="slot"><p><strong style="color:var(--ink);font-weight:500">More are on the way.</strong> Have you built something that helps agents and people work on the same code? <a href="{{github}}/canopy/discussions">Propose it as a project</a>. It keeps your name and your licence.</p></div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="wrap">
+    <h2>Check it yourself</h2>
+    <p class="lead">You should not have to take a project's word for anything. Each claim here comes with the place you can verify it.</p>
+    <div class="cells c4 bleed end">
+      <div><h3>Tests run in public</h3><p>Every push runs the whole suite on GitHub's machines, not ours.</p><p style="margin-top:12px"><a class="src" href="{{github}}/canopy/actions">canopy/actions</a></p></div>
+      <div><h3>Numbers come from tests</h3><p>A figure on this site is produced by a test you can run, and the losing ones stay in.</p><p style="margin-top:12px"><a class="src" href="{{github}}/canopy/blob/main/docs/TEST-REPORT.md">docs/TEST-REPORT.md</a></p></div>
+      <div><h3>Reviews are published</h3><p>What reviewers found, what was fixed, and what was never tested, in one file.</p><p style="margin-top:12px"><a class="src" href="{{github}}/canopy/blob/main/docs/VERIFIER.md">docs/VERIFIER.md</a></p></div>
+      <div><h3>Nothing is collected</h3><p>No telemetry in the tools. No cookies or analytics on this site; the only outside request is for its fonts.</p><p style="margin-top:12px"><a class="src" href="{{github}}/theprojectsierra.ai">the site's source</a></p></div>
+    </div>
   </div>
 </section>
 
@@ -45,10 +60,10 @@
 <section id="contribute">
   <div class="wrap">
     <h2>Three ways to take part</h2>
-    <div class="cols">
+    <div class="cells c3 bleed end">
       <div><h3>Try a project and say what broke</h3><p>A clear bug report from a real repository is the most useful thing a new project can receive.</p></div>
       <div><h3>Pick up an open problem</h3><p>Each project lists what is unproven and what is unbuilt, with issues sized for a first contribution.</p></div>
-      <div><h3>Bring a project</h3><p>If you have built something that belongs beside these, propose it. It keeps your name and your licence.</p></div>
+      <div><h3>Bring a project</h3><p>If you have built something that belongs beside these, propose it. You stay its author.</p></div>
     </div>
   </div>
 </section>

@@ -16,12 +16,12 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 const projectCards = cfg.projects.map(p => `
   <article class="project">
-    <a class="project-mark" href="/${p.slug}/" aria-hidden="true" tabindex="-1"><img src="/assets/${p.slug}/mark.svg" alt="" width="72" height="72"></a>
     <div>
-      <h3><a href="/${p.slug}/">${esc(p.name)}</a> <span class="pill">${esc(p.status)}</span></h3>
+      <h3><img src="/assets/${p.slug}/mark.svg" alt="" width="34" height="34"><a href="/${p.slug}/">${esc(p.name)}</a><span class="pill"><i class="dot amber"></i>${esc(p.status)}</span></h3>
       <p>${esc(p.summary)}</p>
-      <p class="links"><a href="/${p.slug}/">Read how it works</a><a href="${cfg.github}/${p.repo}">Source on GitHub</a><span>${esc(p.license)}</span></p>
+      <p class="links"><a href="/${p.slug}/">How it works</a><a href="${cfg.github}/${p.repo}">Source</a><span>${esc(p.license)}</span></p>
     </div>
+    <figure><img src="/assets/${p.slug}/map.jpg" alt="${esc(p.name)} running: its live view of a repository" width="800" height="477" loading="lazy"></figure>
   </article>`).join('');
 
 const KINDS = [['company', 'Companies'], ['team', 'Teams'], ['product', 'Products']];
