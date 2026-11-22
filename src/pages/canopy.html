@@ -1,0 +1,251 @@
+<!--{"path":"/canopy/","title":"Canopy: coordination and landing layer above Git for AI coding agents","description":"Canopy is an open-source layer above Git for teams whose code is written by many AI agents at once. Agents learn about collisions while they work, and main moves only through a signed landing gate.","image":"/assets/canopy/og.png"}-->
+<div class="sub">
+  <div class="wrap">
+    <img class="only-light" src="/assets/canopy/logo.svg" alt="Canopy" width="120" height="26">
+    <img class="only-dark" src="/assets/canopy/logo-dark.svg" alt="Canopy" width="120" height="26">
+    <a href="#problem">Why</a>
+    <a href="#how">How it works</a>
+    <a href="#compare">Compared</a>
+    <a href="#numbers">Numbers</a>
+    <a href="#start">Start</a>
+    <a href="#contribute">Contribute</a>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Catch agent collisions while they work, not at merge.</h1>
+      <p class="lead" style="margin-top:22px"><strong>Canopy is an open-source layer above Git</strong> for teams whose code is written by many AI agents at once. It records what each agent reads and writes, tells an agent when another agent’s change breaks what it relies on, and lets <code>main</code> move only through a signed landing gate.</p>
+      <div class="cta">
+        <a class="btn solid" href="#start">Run the demo</a>
+        <a class="btn" href="{{github}}/canopy">Source on GitHub</a>
+      </div>
+      <ul class="facts">
+        <li>No npm dependencies</li>
+        <li>Works with Claude Code today</li>
+        <li>Keeps your Git host</li>
+      </ul>
+    </div>
+    <figure class="scene">
+      <canvas id="city" role="img" aria-label="Animated map of a small repository drawn as city blocks. One agent changes a function another agent is calling. The second agent is told while it is still working. Both changes land through a signed gate. A third agent’s change to a protected file waits for a person."></canvas>
+      <figcaption id="city-caption" aria-hidden="true">Three agents work in one repository, each in its own worktree.</figcaption>
+      <ul class="legend" aria-hidden="true">
+        <li><i style="background:var(--agent-a)"></i>Agent A</li>
+        <li><i style="background:var(--agent-b)"></i>Agent B</li>
+        <li><i style="background:var(--agent-c)"></i>Agent C</li>
+        <li><i style="background:var(--block)"></i>a file on main</li>
+      </ul>
+    </figure>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <h2>Pull requests were designed for people</h2>
+    <p class="lead">People talk before they collide. Agents in separate worktrees do not, and the pull request only finds out afterwards.</p>
+    <div class="cols">
+      <div>
+        <h3>Conflicts surface too late</h3>
+        <p>Git sees conflicts in text, at merge. When one agent changes a function’s signature and another writes a new call to it in a different file, both branches pass their own checks and <code>main</code> breaks after both are merged.</p>
+      </div>
+      <div>
+        <h3>The reasoning is gone</h3>
+        <p>A pull request shows the diff. It does not show which of the affected code the agent read, what it never opened, or whether it pulled instructions from a web page along the way.</p>
+      </div>
+      <div>
+        <h3>Rules live in prompts</h3>
+        <p>“Always run the payment tests” in a prompt file is a request. Nothing checks it per folder, and an agent can edit the very file that states the rule.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How Canopy works</h2>
+    <p class="lead">Git still stores the code and your forge still hosts it. Canopy watches the work and guards the way into <code>main</code>.</p>
+    <ol class="steps">
+      <li><h3>Observe</h3><p>Harness hooks report every read, edit and shell command. What a branch wrote is taken from the Git diff, so it cannot be hidden. The agent declares nothing.</p></li>
+      <li><h3>Warn</h3><p>When a function’s signature changes in one worktree, every other worktree that read it, calls it or depends on it is told inside its next tool call. Two agents rewriting the same function are stopped once, then both are told.</p></li>
+      <li><h3>Judge</h3><p><code>canopy land</code> works out what changed, what that affects, how much of it the agent read, and what outside content came in. It runs the folder’s checks in a sandbox on the exact merge commit.</p></li>
+      <li><h3>Sign</h3><p>Each landing is one merge commit with an Ed25519-signed record attached as a Git note. A <code>pre-receive</code> hook on the canonical repository refuses every other route into <code>main</code>.</p></li>
+    </ol>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 960 330" role="img" aria-label="Architecture: agents in separate worktrees send hook events to the canopyd process, which sends notices back, feeds the live map, and runs the landing gate. The gate pushes signed merge commits to the canonical repository, where a pre-receive hook verifies them." font-family="inherit" font-size="14">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--ink)"/></marker></defs>
+        <g fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5">
+          <rect x="10" y="60" width="190" height="64" rx="10"/><rect x="10" y="190" width="190" height="64" rx="10"/>
+          <rect x="330" y="96" width="230" height="122" rx="10" fill="var(--slab)"/>
+          <rect x="350" y="10" width="190" height="46" rx="10"/>
+          <rect x="350" y="270" width="190" height="50" rx="10"/>
+          <rect x="700" y="96" width="250" height="122" rx="10"/>
+        </g>
+        <g fill="var(--ink)">
+          <text x="26" y="87" font-weight="700">Agent A</text><text x="26" y="107" fill="var(--muted)">worktree feat/refunds</text>
+          <text x="26" y="217" font-weight="700">Agent B</text><text x="26" y="237" fill="var(--muted)">worktree fix/cart</text>
+          <text x="346" y="124" font-weight="700">canopyd</text>
+          <text x="346" y="148" fill="var(--muted)">record of reads and writes</text>
+          <text x="346" y="168" fill="var(--muted)">code graph of main</text>
+          <text x="346" y="188" fill="var(--muted)">holds, notices, taint</text>
+          <text x="346" y="208" fill="var(--muted)">one process, one SQLite file</text>
+          <text x="366" y="38" font-weight="700">Live map</text><text x="440" y="38" fill="var(--muted)">in a browser</text>
+          <text x="366" y="292" font-weight="700">Landing gate</text><text x="366" y="310" fill="var(--muted)">sandboxed checks</text>
+          <text x="716" y="124" font-weight="700">Canonical repository</text>
+          <text x="716" y="148" fill="var(--muted)">pre-receive hook verifies the</text>
+          <text x="716" y="168" fill="var(--muted)">signature, commit, tree and base</text>
+          <text x="716" y="188" fill="var(--muted)">of every commit on main</text>
+        </g>
+        <g fill="none" stroke="var(--ink)" stroke-width="1.5" marker-end="url(#ar)">
+          <path d="M200 84 C260 84 270 130 328 134"/><path d="M200 222 C260 222 270 180 328 176"/>
+          <path d="M328 152 C280 152 262 104 204 100" stroke-dasharray="5 4"/>
+          <path d="M445 96 V58"/><path d="M445 218 V268"/>
+          <path d="M540 295 C660 295 640 200 698 178"/>
+        </g>
+        <g fill="var(--muted)" font-size="12.5">
+          <text x="214" y="68">hooks: read, edit, shell</text>
+          <text x="214" y="262">hooks</text>
+          <text x="208" y="150">notice</text>
+          <text x="452" y="80">events</text>
+          <text x="452" y="248">canopy land</text>
+          <text x="606" y="262">signed merge commit</text>
+        </g>
+      </svg>
+      <figcaption>Hooks fail open: if canopyd is down, agents keep working and the gate reports their writes as unwitnessed. The gate fails closed.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <h2>What is different</h2>
+    <p class="lead">Canopy does not replace your merge queue’s job. It moves the discovery of a conflict from merge time to working time, and it puts the rules somewhere an agent cannot edit them.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">Git, pull requests and CI</th><th scope="col">Serial merge queue</th><th scope="col">File locks or claims</th><th scope="col" class="us">Canopy</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">A changed signature and a new caller in another file</th><td>Found by CI after both merge, if a test covers the call</td><td>Found in the queue, if a test covers the call</td><td class="no">Not seen, the files differ</td><td class="us"><span class="yes">Seen while both are working</span>, and blocked at the gate even with no test</td></tr>
+          <tr><th scope="row">Does the other agent hear about it mid-task?</th><td class="no">No</td><td class="no">No</td><td>It is made to wait</td><td class="us yes">Yes, in its next tool call</td></tr>
+          <tr><th scope="row">When agents are made to wait</th><td>Never</td><td>At merge</td><td>Whenever paths overlap</td><td class="us">Only when two write the same function, and only once</td></tr>
+          <tr><th scope="row">Record of what the agent read</th><td class="no">None</td><td class="no">None</td><td class="no">None</td><td class="us">Yes, as reported by the harness</td></tr>
+          <tr><th scope="row">Per-folder rules the agent cannot loosen</th><td>Code owners and branch protection, for people</td><td>Same</td><td class="no">None</td><td class="us yes">Read from main only, tighten-only</td></tr>
+          <tr><th scope="row">Tracks outside content an agent took in</th><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="us yes">Yes, per worktree</td></tr>
+          <tr><th scope="row">Works on GitHub.com as is</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="us">Partly. Canopy must be the only identity allowed to push main</td></tr>
+          <tr><th scope="row">Maturity</th><td>Decades</td><td>Years</td><td>Varies</td><td class="us">v0.1. Tested with scripted agents, not yet in production</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="wrap">
+    <h2>Measured, including where it loses</h2>
+    <p class="lead">One laptop (macOS, Apple silicon, Node 22). Every figure comes from a test in the repository that you can run.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">What was measured</th><th scope="col">Result</th><th scope="col">What it means</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Hook round trip, 2,400 hooks</th><td class="num">p50 0.46 ms, p95 1.54 ms</td><td>The agent does not feel the recording</td></tr>
+          <tr><th scope="row">A semantic conflict is first reported</th><td class="num">22 ms after the edit</td><td>Plain merge-then-CI reports it only after both branches are committed and merged</td></tr>
+          <tr><th scope="row">Index a repository at start</th><td class="num">0.3 s for 1,000 files, 1.6 s for 10,000</td><td>Built from Git objects, cached per file</td></tr>
+          <tr><th scope="row">Context handed to an agent entering a folder</th><td class="num">83 to 339 characters</td><td>Rules, who else is there, why the last three landings happened</td></tr>
+          <tr><th scope="row">Fixed cost of one landing</th><td class="num">about 0.6 s</td><td>On top of your checks. 1.8 s in a 10,000-file repository</td></tr>
+          <tr><th scope="row">Eight unrelated branches landing at once, 1 s check each</th><td class="num">12.2 s default, 5.9 s <code>disjoint</code></td><td>A plain serial queue took 9.2 s. The safe default is slower than a queue. Only the <code>disjoint</code> setting is faster</td></tr>
+          <tr><th scope="row">Test suite</th><td class="num">93 of 93 pass</td><td>All agent behaviour in the tests is scripted</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure class="shot">
+      <img src="/assets/canopy/map.jpg" alt="The Canopy map: a repository drawn as blocks grouped by folder. One block is coloured because a branch is changing it. A side panel lists five branches being worked on, and a feed shows landings and one landing that needs a person." width="800" height="477" loading="lazy">
+      <figcaption>The live map. A block takes a branch’s colour while that branch has an unlanded change in it. Click a block to see its rules, who is changing it, and why it is the way it is.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="band" id="start">
+  <div class="wrap two">
+    <div>
+      <h2>See it in one minute</h2>
+      <p>The demo builds a small repository and plays scripted agents against the real hook endpoint and the real gate. You need Node 22.13 or later and Git 2.38 or later.</p>
+      <div class="term"><button data-copy="cmd-demo">Copy</button><pre id="cmd-demo">git clone {{github}}/canopy
+cd canopy
+node bin/canopy.mjs demo</pre></div>
+      <p>Then open <code>http://127.0.0.1:7717</code>.</p>
+    </div>
+    <div>
+      <h3 style="font-size:1.4rem;margin-bottom:.6em">Use it on your repository</h3>
+      <p>Each agent works in its own worktree and branch. Claude Code reports to Canopy through HTTP hooks that <code>canopy init</code> writes for you.</p>
+      <div class="term"><button data-copy="cmd-use">Copy</button><pre id="cmd-use"><span class="c"># once, inside the canopy folder</span>
+npm link
+<span class="c"># in your repository</span>
+canopy init
+canopy serve
+<span class="c"># when an agent's branch is committed</span>
+canopy land</pre></div>
+      <p><a href="{{github}}/canopy#readme">Read the full guide</a></p>
+    </div>
+  </div>
+</div>
+
+<section id="contribute">
+  <div class="wrap">
+    <h2>Where it stands, and where help is wanted</h2>
+    <p class="lead">Canopy is at version 0.1. These are the gaps, stated plainly. Each one is an open issue you can pick up.</p>
+    <div class="honest">
+      <div>
+        <h3>Not proven yet</h3>
+        <ul>
+          <li><strong>No independent security test</strong><span>The gate and the sandbox have defensive tests. Nobody outside the project has tried to break them.</span></li>
+          <li><strong>No long run with real agents</strong><span>Real Claude Code sessions deliver their start-up hooks. Everything past that has been tested with scripted agents only.</span></li>
+          <li><strong>macOS only</strong><span>The Linux sandbox is written and has never been run.</span></li>
+          <li><strong>One machine is not a security boundary</strong><span>When Canopy and the agents run as the same user, it guards against mistakes, not against a hostile agent.</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Good places to start</h3>
+        <ul>
+          <li><strong><a href="{{github}}/canopy/labels/adapter">Adapters for other harnesses</a></strong><span>Codex CLI, Cursor, Gemini CLI, Aider, OpenCode. An adapter sends five kinds of hook event.</span></li>
+          <li><strong><a href="{{github}}/canopy/labels/linux">Run and fix the Linux sandbox</a></strong><span>A <code>bwrap</code> profile exists. It needs someone with a Linux machine and an afternoon.</span></li>
+          <li><strong><a href="{{github}}/canopy/labels/languages">More languages</a></strong><span>JavaScript, TypeScript, Python and Go today. Rust, Java, Ruby and C# need an extractor, or a tree-sitter backend for all of them.</span></li>
+          <li><strong><a href="{{github}}/canopy/labels/security">Try to break the gate</a></strong><span>Read <code>SECURITY.md</code> first. Findings are credited in the review log.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cta">
+      <a class="btn solid" href="{{github}}/canopy/blob/main/CONTRIBUTING.md">Read the contributor guide</a>
+      <a class="btn" href="/adopters/">Using Canopy? Add your logo</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>Questions</h2>
+    <div class="faq">
+      <details><summary>Is Canopy a replacement for Git or GitHub?</summary><p>No. Git still stores the code and your forge still hosts it. Canopy is a layer above them: it records what agents do while they work and decides what may reach <code>main</code>.</p></details>
+      <details><summary>How is this different from a merge queue?</summary><p>A merge queue tests changes one after another at merge time. Canopy tells agents about a conflict while they are still working, before either has committed, and it can block a landing whose new code calls a function that changed on <code>main</code> even when no test covers that call.</p></details>
+      <details><summary>How is this different from file locking?</summary><p>Locks make agents wait whenever their files overlap and miss conflicts between different files. Canopy works at the level of functions and their callers. An agent is made to wait only when two want to rewrite the same function, and only once.</p></details>
+      <details><summary>Which coding agents does it work with?</summary><p>Claude Code today, through its HTTP hooks. Any harness that can post the same five hook events can be an adapter. Adapters for other tools are open issues.</p></details>
+      <details><summary>Does it work with GitHub.com or GitLab.com?</summary><p>Partly. Hosted forges do not run custom <code>pre-receive</code> hooks, so there you make the Canopy host the only identity allowed to push to <code>main</code> using branch protection. On a self-hosted Git server the hook enforces it directly.</p></details>
+      <details><summary>What does it send off my machine?</summary><p>Nothing. Canopy listens on the loopback address only. It stores file paths, symbol names, hashes and signatures in one SQLite file inside your repository’s <code>.git</code> folder. Tool output is discarded on arrival.</p></details>
+      <details><summary>Was Canopy written by AI agents?</summary><p>Yes, directed by a person. The first version was designed, attacked on paper, built, reviewed and tested by separate Claude agents in defined roles. The review log and the test report are in the repository, including the defects that were found and the security test that did not run.</p></details>
+      <details><summary>What licence is it under?</summary><p>Apache-2.0. Free to use, change and ship, including commercially.</p></details>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"SoftwareSourceCode","name":"Canopy","description":"A coordination and landing layer above Git for teams whose code is written by many AI coding agents at once.","url":"{{site}}/canopy/","codeRepository":"{{github}}/canopy","programmingLanguage":"JavaScript","runtimePlatform":"Node.js 22","license":"https://www.apache.org/licenses/LICENSE-2.0","version":"0.1.0","publisher":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"}},
+{"@type":"SoftwareApplication","name":"Canopy","applicationCategory":"DeveloperApplication","operatingSystem":"macOS","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"{{site}}/canopy/"},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is Canopy a replacement for Git or GitHub?","acceptedAnswer":{"@type":"Answer","text":"No. Git still stores the code and your forge still hosts it. Canopy is a layer above them: it records what agents do while they work and decides what may reach main."}},
+{"@type":"Question","name":"How is Canopy different from a merge queue?","acceptedAnswer":{"@type":"Answer","text":"A merge queue tests changes one after another at merge time. Canopy tells agents about a conflict while they are still working, before either has committed, and it can block a landing whose new code calls a function that changed on main even when no test covers that call."}},
+{"@type":"Question","name":"How is Canopy different from file locking?","acceptedAnswer":{"@type":"Answer","text":"Locks make agents wait whenever their files overlap and miss conflicts between different files. Canopy works at the level of functions and their callers. An agent is made to wait only when two want to rewrite the same function, and only once."}},
+{"@type":"Question","name":"Which coding agents does Canopy work with?","acceptedAnswer":{"@type":"Answer","text":"Claude Code today, through its HTTP hooks. Any harness that can post the same five hook events can be an adapter."}},
+{"@type":"Question","name":"Does Canopy work with GitHub.com or GitLab.com?","acceptedAnswer":{"@type":"Answer","text":"Partly. Hosted forges do not run custom pre-receive hooks, so there the Canopy host must be the only identity allowed to push to main. On a self-hosted Git server the hook enforces it directly."}},
+{"@type":"Question","name":"What does Canopy send off my machine?","acceptedAnswer":{"@type":"Answer","text":"Nothing. It listens on the loopback address only and stores file paths, symbol names, hashes and signatures in one SQLite file inside the repository's .git folder."}}
+]}]}
+</script>

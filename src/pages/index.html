@@ -1,0 +1,60 @@
+<!--{"path":"/","title":"{{org}}: open-source tools for teams where agents and humans build together","description":"{{org}} is a home for open-source projects that make agent-written software visible, secure, fast and well made. First project: Canopy, a coordination and landing layer above Git for AI coding agents."}-->
+<section class="hero">
+  <div class="wrap" style="grid-template-columns:1fr">
+    <div>
+      <h1 style="max-width:17ch">Open-source tools for teams where agents and humans build together.</h1>
+      <p class="lead" style="margin-top:24px"><strong>{{org}} is a home for projects that make agent-written software something a team can see, trust and ship.</strong> Everything here is free to use, measured in public, and open to contributors.</p>
+      <div class="cta">
+        <a class="btn solid" href="#projects">See the projects</a>
+        <a class="btn" href="{{github}}">Contribute on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stands-for">
+  <div class="wrap">
+    <h2>What every project here is held to</h2>
+    <dl class="pillars">
+      <div><dt>Visibility</dt><dd>You can see what each agent read, changed and relied on.</dd></div>
+      <div><dt>Security</dt><dd>Controls are enforced by the system, not requested in a prompt.</dd></div>
+      <div><dt>Performance</dt><dd>Numbers are measured and published, including the ones we lose on.</dd></div>
+      <div><dt>Quality</dt><dd>Each project ships with its review log and its test report.</dd></div>
+      <div><dt>Outcome</dt><dd>A tool earns its place by what reaches main, not by activity.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <h2>Projects</h2>
+    {{projectCards}}
+    <div class="slot"><p><strong style="color:var(--ink)">More are on the way.</strong> Have a tool that helps agents and people work on the same code? <a href="{{github}}/canopy/discussions">Propose it as a project</a>.</p></div>
+  </div>
+</section>
+
+<section id="adopters">
+  <div class="wrap">
+    <h2>Who uses these projects</h2>
+    <p class="lead">Companies, teams and products that run a project from here in real work.</p>
+    {{adopterWall}}
+    <div class="cta"><a class="btn" href="/adopters/">Add your logo</a></div>
+  </div>
+</section>
+
+<section id="contribute">
+  <div class="wrap">
+    <h2>Three ways to take part</h2>
+    <div class="cols">
+      <div><h3>Try a project and say what broke</h3><p>A clear bug report from a real repository is the most useful thing a new project can receive.</p></div>
+      <div><h3>Pick up an open problem</h3><p>Each project lists what is unproven and what is unbuilt, with issues sized for a first contribution.</p></div>
+      <div><h3>Bring a project</h3><p>If you have built something that belongs beside these, propose it. It keeps your name and your licence.</p></div>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","name":"{{org}}","url":"{{site}}/","description":"{{tagline}}.","sameAs":["{{github}}"]},
+{"@type":"WebSite","name":"{{org}}","url":"{{site}}/"}]}
+</script>
