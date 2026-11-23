@@ -24,7 +24,7 @@
       </ul>
       <h1>Catch agent collisions while they work, not at merge.</h1>
       <p class="lead" style="margin-top:22px"><strong>Canopy is an open-source layer above Git</strong> for teams whose code is written by many AI agents at once. It records what each agent reads and writes, tells an agent when another agent’s change breaks what it relies on, and lets <code>main</code> move only through a signed landing gate.</p>
-      <div class="term oneline"><code id="cmd-hero">npx canopy-land demo</code><button data-copy="cmd-hero">Copy</button></div>
+      <div class="term oneline"><code id="cmd-hero">git clone {{github}}/canopy && cd canopy && node bin/canopy.mjs demo</code><button data-copy="cmd-hero">Copy</button></div>
       <div class="cta" style="margin-top:16px">
         <a class="btn solid" href="#start">Get started</a>
         <a class="btn" href="{{github}}/canopy">Source on GitHub</a>
@@ -233,13 +233,15 @@
     <div class="split">
       <div>
         <h3>See the demo</h3>
-        <div class="term"><header><span>a generated repository with scripted agents</span><button data-copy="cmd-demo">Copy</button></header><pre id="cmd-demo">npx canopy-land demo</pre></div>
+        <div class="term"><header><span>a generated repository with scripted agents</span><button data-copy="cmd-demo">Copy</button></header><pre id="cmd-demo">git clone {{github}}/canopy
+cd canopy
+node bin/canopy.mjs demo</pre></div>
         <p class="small" style="margin-top:12px">Then open <code>http://127.0.0.1:7717</code>. It plays against the real hook endpoint and the real gate.</p>
       </div>
       <div>
         <h3>Use it on your repository</h3>
-        <div class="term"><header><span>each agent in its own worktree</span><button data-copy="cmd-use">Copy</button></header><pre id="cmd-use"><span class="c"># once; the command it installs is canopy</span>
-npm install -g canopy-land
+        <div class="term"><header><span>each agent in its own worktree</span><button data-copy="cmd-use">Copy</button></header><pre id="cmd-use"><span class="c"># once, inside the canopy folder</span>
+npm link
 <span class="c"># in your repository</span>
 canopy init
 canopy serve
@@ -310,7 +312,7 @@ canopy land</pre></div>
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"SoftwareSourceCode","name":"Canopy","description":"A coordination and landing layer above Git for teams whose code is written by many AI coding agents at once.","url":"{{site}}/canopy/","codeRepository":"{{github}}/canopy","programmingLanguage":"JavaScript","runtimePlatform":"Node.js 22","license":"https://www.apache.org/licenses/LICENSE-2.0","version":"0.3.0","sameAs":"https://www.npmjs.com/package/canopy-land","publisher":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"}},
+{"@type":"SoftwareSourceCode","name":"Canopy","description":"A coordination and landing layer above Git for teams whose code is written by many AI coding agents at once.","url":"{{site}}/canopy/","codeRepository":"{{github}}/canopy","programmingLanguage":"JavaScript","runtimePlatform":"Node.js 22","license":"https://www.apache.org/licenses/LICENSE-2.0","version":"0.3.0","publisher":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"}},
 {"@type":"SoftwareApplication","name":"Canopy","applicationCategory":"DeveloperApplication","operatingSystem":"macOS","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"{{site}}/canopy/"},
 {"@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Is Canopy a replacement for Git or GitHub?","acceptedAnswer":{"@type":"Answer","text":"No. Git still stores the code and your forge still hosts it. Canopy is a layer above them: it records what agents do while they work and decides what may reach main."}},
