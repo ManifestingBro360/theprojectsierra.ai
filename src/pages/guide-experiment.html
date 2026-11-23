@@ -1,0 +1,72 @@
+<!--{"path":"/guides/four-ai-agents-one-repo-experiment/","title":"We ran four AI coding agents on one repository, with and without coordination","description":"Four trials with real AI coding agents working on one Git repository at once: plain Git broke main in 1 of 4 states, a landing gate kept it green in 18 of 18, and agents warned mid-task changed their code only 1 time in 8."}-->
+<section class="page"><div class="wrap"><article class="prose">
+  <h1>We ran four AI coding agents on one repository, with and without coordination</h1>
+  <p class="meta">Experiment, 24 November 2026</p>
+  <p class="lead">We gave real coding agents tasks designed to collide, first with plain Git and then with Canopy. The landing gate kept <code>main</code> working every time. Warning agents while they worked barely helped: 1 warned agent in 8 changed its code. This page reports both results.</p>
+
+  <h2>The setup</h2>
+  <p>A small shop repository: money helpers, a cart, a checkout, and tests. Each agent was a Claude Sonnet model in its own Git worktree and branch, started at the same moment with a brief of a few sentences. No agent was told what the others were doing.</p>
+  <table>
+    <thead><tr><th scope="col">Agent</th><th scope="col">Task</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">A</th><td>Make <code>toCents</code> require a second argument, <code>mode</code></td></tr>
+      <tr><th scope="row">B and D</th><td>Each add new code that calls <code>toCents</code>, in different files</td></tr>
+      <tr><th scope="row">C</th><td>Fix an unrelated bug</td></tr>
+    </tbody>
+  </table>
+  <p>This is the collision Git cannot see. A changes a function's signature. B and D write new calls to the old form in other files. No text conflicts, every branch passes its own tests, and <code>main</code> breaks once they are all merged.</p>
+  <p>After each run we checked out every state <code>main</code> had been in and ran the tests.</p>
+
+  <h2>What happened</h2>
+  <table>
+    <thead><tr><th scope="col">Measure</th><th scope="col">Result</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Plain Git: states of <code>main</code> that failed their tests</th><td class="num">1 of 4</td></tr>
+      <tr><th scope="row">With Canopy: states of <code>main</code> that passed, four runs</th><td class="num">18 of 18</td></tr>
+      <tr><th scope="row">Warned callers who changed their code before landing, runs 1 to 3</th><td class="num">0 of 6</td></tr>
+      <tr><th scope="row">The same, run 4, after contracts were added</th><td class="num">1 of 2</td></tr>
+      <tr><th scope="row">Landings wrongly refused, run 4</th><td class="num">0</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Finding 1: the gate works</h2>
+  <p>Canopy lets <code>main</code> move only through <code>canopy land</code>, which runs the checks on the exact merge commit. A branch written against an old signature is refused, told why, and lands after it merges <code>main</code> and fixes its calls. In four runs nothing broken reached <code>main</code>.</p>
+
+  <h2>Finding 2: agents ignore warnings</h2>
+  <p>Canopy also tells an agent, mid-task, when a function it calls is changing on another branch. In the first three runs no warned agent acted on it. Making the wording clearer changed nothing.</p>
+  <p>Looking at the transcripts, ignoring the warning was reasonable. The agent's own copy still had the old function. Its own tests passed. The warning did not say what to write, and the new version was not on <code>main</code> yet. A warning is a request, and the agent had a task.</p>
+
+  <h2>What we changed</h2>
+  <ul>
+    <li><strong>Tell the author, not only the callers.</strong> The agent making the breaking change is the one that can prevent the collision. Once it was told about new callers, its rework fell from two cycles to one.</li>
+    <li><strong>Contracts.</strong> Before a breaking change to shared code can land, its author publishes a test for the new behaviour. Canopy runs it on the old code and accepts it only if a test case fails there. Callers are then shown the new signature and a piece of that test.</li>
+  </ul>
+  <p>In run 4 a caller rewrote its call before landing, after being shown the contract. That was the first time in four runs. The other caller landed before the contract existed and never saw it.</p>
+
+  <h2>What this does not show</h2>
+  <ul>
+    <li>Four runs, one small repository, minutes long. One of two is an observation, not a rate.</li>
+    <li>The agents checked in with Canopy by command. Claude Code's hooks, which deliver notices inside each tool call, were not used.</li>
+    <li>A change in what a function returns, with the same signature, was not properly tested and is not caught by contracts.</li>
+    <li>A contract proves the test is real and about the right function. It does not prove the test is good.</li>
+    <li>We wrote the tasks to collide. Real work collides less often.</li>
+  </ul>
+
+  <h2>The open problems</h2>
+  <p>Each of these is an open issue with its current result. Ideas and experiments are as welcome as code.</p>
+  <ul>
+    <li><a href="{{github}}/canopy/issues/28">Agents ignore mid-task warnings</a>: 1 of 8 adapted</li>
+    <li><a href="{{github}}/canopy/issues/29">A caller can land before the contract exists</a></li>
+    <li><a href="{{github}}/canopy/issues/30">Behaviour changes that keep the same signature</a></li>
+    <li><a href="{{github}}/canopy/issues/31">Two machines cannot see each other's in-flight work</a></li>
+    <li><a href="{{github}}/canopy/issues/32">Judging whether a contract tests enough</a></li>
+    <li><a href="{{github}}/canopy/issues/33">Contracts for Python, Go and other test runners</a></li>
+  </ul>
+
+  <h2>Try it</h2>
+  <div class="term"><header><span>a generated repository with scripted agents and a live map</span></header><pre>npx canopy-land demo</pre></div>
+  <p>The full write-up of all four runs, including what went badly, is in <a href="{{github}}/canopy/blob/main/docs/TRIALS.md">docs/TRIALS.md</a>. Canopy is free and open source under Apache-2.0: <a href="{{github}}/canopy">source</a>, <a href="/canopy/">how it works</a>.</p>
+</article></div></section>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"We ran four AI coding agents on one repository, with and without coordination","description":"Four trials with real AI coding agents working on one Git repository at once: plain Git broke main in 1 of 4 states, a landing gate kept it green in 18 of 18, and agents warned mid-task changed their code only 1 time in 8.","url":"{{site}}/guides/four-ai-agents-one-repo-experiment/","datePublished":"2026-11-24","author":{"@type":"Organization","name":"{{org}}","url":"{{site}}/"},"publisher":{"@type":"Organization","name":"{{org}}"}}
+</script>
