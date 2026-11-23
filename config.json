@@ -7,7 +7,7 @@
     {
       "slug": "canopy",
       "name": "Canopy",
-      "status": "v0.1, early",
+      "status": "v0.3, early",
       "summary": "A coordination and landing layer above Git for code written by many AI agents at once. It records what each agent reads and writes, warns an agent when another agent's change breaks what it relies on, and lets main move only through a signed landing gate.",
       "repo": "canopy",
       "license": "Apache-2.0"
